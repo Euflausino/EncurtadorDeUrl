@@ -1,9 +1,9 @@
-package com.euflausino.encurtaurl.adapter.output.database;
+package com.euflausino.encurtaurl.adapter.output.database.url;
 
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Table("urls")
 public class DBUrlEntity {
@@ -11,9 +11,9 @@ public class DBUrlEntity {
     @PrimaryKey
     private String original_url;
     private String short_url;
-    private LocalDateTime created_at;
+    private Instant created_at;
 
-    public DBUrlEntity(String original_url, String short_url, LocalDateTime created_at) {
+    public DBUrlEntity(String original_url, String short_url, Instant created_at) {
         this.original_url = original_url;
         this.short_url = short_url;
         this.created_at = created_at;
@@ -38,11 +38,11 @@ public class DBUrlEntity {
         this.short_url = short_url;
     }
 
-    public LocalDateTime getCreated_at() {
+    public Instant getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
+    public void setCreated_at(Instant created_at) {
         this.created_at = created_at;
     }
 }

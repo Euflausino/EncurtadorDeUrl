@@ -1,17 +1,20 @@
 package com.euflausino.encurtaurl.application.model;
 
+import jnr.ffi.annotations.In;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class UrlModel {
 
     private String original_url;
     private String short_url;
-    private LocalDateTime created_at;
+    private Instant created_at;
 
-    public UrlModel(String original_url, String short_url, LocalDateTime created_at) {
+    public UrlModel(String original_url, String short_url) {
         this.original_url = original_url;
         this.short_url = short_url;
-        this.created_at = created_at;
+        this.created_at = Instant.now();
     }
 
     public String getOriginal_url() {
@@ -30,11 +33,11 @@ public class UrlModel {
         this.short_url = short_url;
     }
 
-    public LocalDateTime getCreated_at() {
+    public Instant getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(LocalDateTime timestamp) {
+    public void setCreated_at(Instant timestamp) {
         this.created_at = timestamp;
     }
 }
