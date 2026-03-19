@@ -34,7 +34,6 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
 
         String cacheKey = "short_url:" + code;
         redisTemplate.opsForValue().set(cacheKey, urlModel.getOriginal_url(), 10, TimeUnit.MINUTES);
-        initializeCount(code);
 
         return "http://localhost:8080/url/"+code;
     }
@@ -46,10 +45,9 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
 
         String url = redisTemplate.opsForValue().get(cacheKey);
         if (url == null){
-            String urlOrig = findOutput.find(code);
-            redisTemplate.opsForValue().set(cacheKey, urlOrig, 10, TimeUnit.MINUTES);
+            url = findOutput.find(code);
+            redisTemplate.opsForValue().set(cacheKey, url, 10, TimeUnit.MINUTES);
         }
-        incrementCount(clicks);
         return url;
     }
 
@@ -64,14 +62,6 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
             throw new IllegalArgumentException("Invalid code");
         }
         return numbers[0];
-    }
-
-    private void incrementCount(String code){
-        redisTemplate.opsForValue().increment(code);
-    }
-
-    private void initializeCount(String code){
-        redisTemplate.opsForValue().setIfAbsent("clicks:" + code, "0");
     }
 
 }
