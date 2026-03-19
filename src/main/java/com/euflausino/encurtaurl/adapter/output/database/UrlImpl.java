@@ -1,6 +1,6 @@
 package com.euflausino.encurtaurl.adapter.output.database;
 
-import com.euflausino.encurtaurl.adapter.output.database.exceptions.UrlNaoEncontradaException;
+import com.euflausino.encurtaurl.config.exceptions.UrlNaoEncontradaException;
 import com.euflausino.encurtaurl.adapter.output.database.mapper.OutputMapper;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 import com.euflausino.encurtaurl.application.ports.output.IFindOutput;

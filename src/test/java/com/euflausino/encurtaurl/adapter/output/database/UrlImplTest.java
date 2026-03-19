@@ -1,6 +1,6 @@
 package com.euflausino.encurtaurl.adapter.output.database;
 
-import com.euflausino.encurtaurl.adapter.output.database.exceptions.UrlNaoEncontradaException;
+import com.euflausino.encurtaurl.config.exceptions.UrlNaoEncontradaException;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)

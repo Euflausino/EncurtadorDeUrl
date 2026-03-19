@@ -1,4 +1,4 @@
-package com.euflausino.encurtaurl.adapter.output.database.exceptions;
+package com.euflausino.encurtaurl.config.exceptions;
 
 public class UrlNaoEncontradaException extends RuntimeException {
     public UrlNaoEncontradaException(String message) {
