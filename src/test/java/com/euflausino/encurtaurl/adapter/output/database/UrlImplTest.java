@@ -1,5 +1,6 @@
 package com.euflausino.encurtaurl.adapter.output.database;
 
+import com.euflausino.encurtaurl.adapter.output.database.exceptions.UrlNaoEncontradaException;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class UrlImplTest {
         Mockito.when(urlRepository.findById("abc123"))
                 .thenReturn(Optional.empty());
 
-        Assertions.assertThrows(NoSuchElementException.class, () -> {
+        Assertions.assertThrows(UrlNaoEncontradaException.class, () -> {
             urlImpl.find("abc123");
         });
     }

@@ -1,5 +1,6 @@
 package com.euflausino.encurtaurl.adapter.output.database;
 
+import com.euflausino.encurtaurl.adapter.output.database.exceptions.UrlNaoEncontradaException;
 import com.euflausino.encurtaurl.adapter.output.database.mapper.OutputMapper;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 import com.euflausino.encurtaurl.application.ports.output.IFindOutput;
@@ -25,7 +26,7 @@ public class UrlImpl implements ISaveOutput, IFindOutput {
     public String find(String code){
         return urlRepository.findById(code)
                 .map(DBUrlEntity::getOriginal_url)
-                .orElseThrow();
+                .orElseThrow(() -> new UrlNaoEncontradaException("A url não foi encontrada."));
     }
 
 }
