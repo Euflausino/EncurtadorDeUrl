@@ -9,14 +9,15 @@ import java.time.Instant;
 public class DBUrlEntity {
 
     @PrimaryKey
-    private String original_url;
     private String short_code;
+
+    private String original_url;
     private Instant created_at;
 
-    public DBUrlEntity(String original_url, String short_code, Instant created_at) {
-        this.original_url = original_url;
+    public DBUrlEntity(String short_code, String original_url) {
         this.short_code = short_code;
-        this.created_at = created_at;
+        this.original_url = original_url;
+        this.created_at = Instant.now();
     }
 
     public DBUrlEntity() {

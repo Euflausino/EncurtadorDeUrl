@@ -8,8 +8,7 @@ public class OutputMapper {
     public static DBUrlEntity toDBEntity(UrlModel entity) {
         return new DBUrlEntity(
             entity.getShort_url(),
-            entity.getOriginal_url(),
-            entity.getCreated_at()
+            entity.getOriginal_url()
         );
     }
 }

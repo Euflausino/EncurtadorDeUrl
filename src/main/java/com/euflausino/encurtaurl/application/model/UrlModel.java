@@ -4,14 +4,14 @@ import java.time.Instant;
 
 public class UrlModel {
 
-    private String original_url;
     private String short_url;
+    private String original_url;
     private Instant created_at;
 
-    public UrlModel(String original_url, String short_url) {
-        this.original_url = original_url;
+    public UrlModel(String original_url, String short_url, Instant created_at) {
         this.short_url = short_url;
-        this.created_at = Instant.now();
+        this.original_url = original_url;
+        this.created_at = created_at;
     }
 
     public UrlModel() {

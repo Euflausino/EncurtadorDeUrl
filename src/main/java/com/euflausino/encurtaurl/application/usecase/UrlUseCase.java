@@ -38,7 +38,7 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
         redisTemplate.opsForValue().set(cacheKey, urlModel.getOriginal_url(), 10, TimeUnit.MINUTES);
         clickUseCase.initializeCount(code);
 
-        return code;
+        return "http://localhost:8080/url/"+code;
     }
 
     @Override
