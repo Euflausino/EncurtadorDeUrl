@@ -1,6 +1,6 @@
-package com.euflausino.encurtaurl.adapter.output.database.url.mapper;
+package com.euflausino.encurtaurl.adapter.output.database.mapper;
 
-import com.euflausino.encurtaurl.adapter.output.database.url.DBUrlEntity;
+import com.euflausino.encurtaurl.adapter.output.database.DBUrlEntity;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 
 public class OutputMapper {

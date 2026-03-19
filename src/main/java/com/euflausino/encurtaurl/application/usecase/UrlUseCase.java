@@ -14,14 +14,12 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
 
     private final Hashids hashids;
     private final RedisTemplate<String, String> redisTemplate;
-    private final ClickUseCase clickUseCase;
     private final IFindOutput findOutput;
     private final ISaveOutput saveOutput;
 
-    public UrlUseCase(Hashids hashids, RedisTemplate<String, String> redisTemplate, ClickUseCase clickUseCase, IFindOutput findOutput, ISaveOutput saveOutput) {
+    public UrlUseCase(Hashids hashids, RedisTemplate<String, String> redisTemplate, IFindOutput findOutput, ISaveOutput saveOutput) {
         this.hashids = hashids;
         this.redisTemplate = redisTemplate;
-        this.clickUseCase = clickUseCase;
         this.findOutput = findOutput;
         this.saveOutput = saveOutput;
     }
@@ -36,7 +34,7 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
 
         String cacheKey = "short_url:" + code;
         redisTemplate.opsForValue().set(cacheKey, urlModel.getOriginal_url(), 10, TimeUnit.MINUTES);
-        clickUseCase.initializeCount(code);
+        initializeCount(code);
 
         return "http://localhost:8080/url/"+code;
     }
@@ -51,7 +49,7 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
             String urlOrig = findOutput.find(code);
             redisTemplate.opsForValue().set(cacheKey, urlOrig, 10, TimeUnit.MINUTES);
         }
-        clickUseCase.incrementCount(clicks);
+        incrementCount(clicks);
         return url;
     }
 
@@ -67,4 +65,13 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
         }
         return numbers[0];
     }
+
+    private void incrementCount(String code){
+        redisTemplate.opsForValue().increment(code);
+    }
+
+    private void initializeCount(String code){
+        redisTemplate.opsForValue().setIfAbsent("clicks:" + code, "0");
+    }
+
 }

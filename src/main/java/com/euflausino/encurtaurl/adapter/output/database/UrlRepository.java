@@ -1,4 +1,4 @@
-package com.euflausino.encurtaurl.adapter.output.database.url;
+package com.euflausino.encurtaurl.adapter.output.database;
 
 import org.springframework.data.cassandra.repository.CassandraRepository;
 

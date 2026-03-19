@@ -2,7 +2,6 @@ package com.euflausino.encurtaurl.config;
 
 import com.euflausino.encurtaurl.application.ports.output.IFindOutput;
 import com.euflausino.encurtaurl.application.ports.output.ISaveOutput;
-import com.euflausino.encurtaurl.application.usecase.ClickUseCase;
 import com.euflausino.encurtaurl.application.usecase.UrlUseCase;
 import org.hashids.Hashids;
 import org.springframework.context.annotation.Bean;

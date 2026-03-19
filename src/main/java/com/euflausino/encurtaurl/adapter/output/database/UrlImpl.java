@@ -1,6 +1,6 @@
-package com.euflausino.encurtaurl.adapter.output.database.url;
+package com.euflausino.encurtaurl.adapter.output.database;
 
-import com.euflausino.encurtaurl.adapter.output.database.url.mapper.OutputMapper;
+import com.euflausino.encurtaurl.adapter.output.database.mapper.OutputMapper;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 import com.euflausino.encurtaurl.application.ports.output.IFindOutput;
 import com.euflausino.encurtaurl.application.ports.output.ISaveOutput;
