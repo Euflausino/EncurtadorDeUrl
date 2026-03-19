@@ -15,6 +15,9 @@ public class HashidsProperties {
         this.length = length;
     }
 
+    public HashidsProperties() {
+    }
+
     public String getSalt() {
         return salt;
     }

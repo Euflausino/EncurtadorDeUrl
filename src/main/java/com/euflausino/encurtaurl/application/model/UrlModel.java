@@ -14,6 +14,9 @@ public class UrlModel {
         this.created_at = Instant.now();
     }
 
+    public UrlModel() {
+    }
+
     public String getOriginal_url() {
         return original_url;
     }

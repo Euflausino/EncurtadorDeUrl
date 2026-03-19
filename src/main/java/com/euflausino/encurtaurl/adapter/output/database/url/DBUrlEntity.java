@@ -10,12 +10,12 @@ public class DBUrlEntity {
 
     @PrimaryKey
     private String original_url;
-    private String short_url;
+    private String short_code;
     private Instant created_at;
 
-    public DBUrlEntity(String original_url, String short_url, Instant created_at) {
+    public DBUrlEntity(String original_url, String short_code, Instant created_at) {
         this.original_url = original_url;
-        this.short_url = short_url;
+        this.short_code = short_code;
         this.created_at = created_at;
     }
 
@@ -31,11 +31,11 @@ public class DBUrlEntity {
     }
 
     public String getShort_url() {
-        return short_url;
+        return short_code;
     }
 
-    public void setShort_url(String short_url) {
-        this.short_url = short_url;
+    public void setShort_url(String short_code) {
+        this.short_code = short_code;
     }
 
     public Instant getCreated_at() {

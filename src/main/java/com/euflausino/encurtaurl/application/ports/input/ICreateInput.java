@@ -4,6 +4,6 @@ import com.euflausino.encurtaurl.application.model.UrlModel;
 
 public interface ICreateInput {
 
-    String createShortUrl(UrlModel urlModel);
+    String createShortUrl(String urlOriginal);
 
 }

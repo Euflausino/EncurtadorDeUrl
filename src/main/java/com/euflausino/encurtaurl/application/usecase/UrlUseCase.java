@@ -1,6 +1,8 @@
 package com.euflausino.encurtaurl.application.usecase;
 
 import com.euflausino.encurtaurl.application.model.UrlModel;
+import com.euflausino.encurtaurl.application.ports.input.ICreateInput;
+import com.euflausino.encurtaurl.application.ports.input.IRedirectInput;
 import com.euflausino.encurtaurl.application.ports.output.IFindOutput;
 import com.euflausino.encurtaurl.application.ports.output.ISaveOutput;
 import org.hashids.Hashids;
@@ -8,7 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
-public class UrlUseCase {
+public class UrlUseCase implements ICreateInput, IRedirectInput {
 
     private final Hashids hashids;
     private final RedisTemplate<String, String> redisTemplate;
@@ -24,8 +26,11 @@ public class UrlUseCase {
         this.saveOutput = saveOutput;
     }
 
-    public String createShortUrl(UrlModel urlModel) {
+    @Override
+    public String createShortUrl(String urlOriginal) {
         String code = generateCode();
+        UrlModel urlModel = new UrlModel();
+        urlModel.setOriginal_url(urlOriginal);
         urlModel.setShort_url(code);
         saveOutput.save(urlModel);
 
@@ -36,6 +41,7 @@ public class UrlUseCase {
         return code;
     }
 
+    @Override
     public String redirectShortUrl(String code) {
         String cacheKey =   "short_url:" + code;
         String clicks =  "clicks:" + code;
