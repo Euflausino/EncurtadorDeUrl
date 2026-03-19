@@ -1,9 +1,6 @@
 package com.euflausino.encurtaurl.application.model;
 
-import jnr.ffi.annotations.In;
-
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 public class UrlModel {
 

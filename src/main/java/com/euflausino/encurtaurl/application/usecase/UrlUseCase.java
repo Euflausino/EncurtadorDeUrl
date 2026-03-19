@@ -36,6 +36,19 @@ public class UrlUseCase {
         return code;
     }
 
+    public String redirectShortUrl(String code) {
+        String cacheKey =   "short_url:" + code;
+        String clicks =  "clicks:" + code;
+
+        String url = redisTemplate.opsForValue().get(cacheKey);
+        if (url == null){
+            String urlOrig = findOutput.find(code);
+            redisTemplate.opsForValue().set(cacheKey, urlOrig, 10, TimeUnit.MINUTES);
+        }
+        clickUseCase.incrementCount(clicks);
+        return url;
+    }
+
     private String generateCode(){
         Long id = redisTemplate.opsForValue().increment("url:id");
         return hashids.encode(id);
