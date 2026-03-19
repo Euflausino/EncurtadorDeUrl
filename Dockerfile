@@ -1,17 +1,25 @@
-FROM maven:3.6-openjdk-17 AS build
-
-COPY src /app/src
-COPY pom.xml /app
+# -------- STAGE 1: BUILD --------
+FROM maven:3.9.9-eclipse-temurin-17 AS build
 
 WORKDIR /app
-RUN mvn clean install
 
+# Copia apenas o pom primeiro (melhora cache de dependências)
+COPY pom.xml .
+
+RUN mvn dependency:go-offline -B
+
+# Agora copia o código
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+# -------- STAGE 2: RUNTIME --------
 FROM eclipse-temurin:17-jre-jammy
 
-COPY --from=build /app/target/encurtaUrl-0.0.1-SNAPSHOT.jar /app/app.jar
-
 WORKDIR /app
+
+COPY --from=build /app/target/encurtaUrl-0.0.1-SNAPSHOT.jar app.jar
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
