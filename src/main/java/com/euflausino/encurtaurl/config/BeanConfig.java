@@ -17,13 +17,8 @@ public class BeanConfig {
     }
 
     @Bean
-    public UrlUseCase urlUseCase(Hashids hashids, RedisTemplate<String, String> redisTemplate, ClickUseCase clickUseCase, IFindOutput findOutput, ISaveOutput saveOutput) {
-        return new UrlUseCase(hashids, redisTemplate, clickUseCase, findOutput, saveOutput);
-    }
-
-    @Bean
-    public ClickUseCase clickUseCase(RedisTemplate<String, String> redisTemplate) {
-        return new ClickUseCase(redisTemplate);
+    public UrlUseCase urlUseCase(Hashids hashids, RedisTemplate<String, String> redisTemplate, IFindOutput findOutput, ISaveOutput saveOutput) {
+        return new UrlUseCase(hashids, redisTemplate, findOutput, saveOutput);
     }
 
 }
