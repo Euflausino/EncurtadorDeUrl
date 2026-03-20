@@ -3,9 +3,11 @@ package com.euflausino.encurtaurl.adapter.output.database.redis;
 import com.euflausino.encurtaurl.application.ports.output.IAdicionarEmCacheOutput;
 import com.euflausino.encurtaurl.application.ports.output.IBuscaCacheOutput;
 import com.euflausino.encurtaurl.application.ports.output.IGenerateCodeOutput;
+import com.euflausino.encurtaurl.config.exceptions.CodeGenerationException;
 import org.hashids.Hashids;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.util.InvalidUrlException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,7 +38,7 @@ public class RedisDB implements IAdicionarEmCacheOutput, IBuscaCacheOutput, IGen
     public String generateCode(){
         Long id = redisTemplate.opsForValue().increment("url:id");
         if (id == null) {
-            throw new RuntimeException("Erro ao gerar ID no Redis");
+            throw new CodeGenerationException("Erro ao gerar ID no Redis");
         }
         return hashids.encode(id);
     }
@@ -44,7 +46,7 @@ public class RedisDB implements IAdicionarEmCacheOutput, IBuscaCacheOutput, IGen
     public Long decode(String code){
         long[] numbers = hashids.decode(code);
         if (numbers.length == 0) {
-            throw new IllegalArgumentException("Invalid code");
+            throw new InvalidUrlException("Invalid code");
         }
         return numbers[0];
     }
