@@ -41,8 +41,6 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
     @Override
     public String redirectShortUrl(String code) {
         String cacheKey =   "short_url:" + code;
-        String clicks =  "clicks:" + code;
-
         String url = redisTemplate.opsForValue().get(cacheKey);
         if (url == null){
             url = findOutput.find(code);
