@@ -35,6 +35,9 @@ public class RedisDB implements IAdicionarEmCacheOutput, IBuscaCacheOutput, IGen
     @Override
     public String generateCode(){
         Long id = redisTemplate.opsForValue().increment("url:id");
+        if (id == null) {
+            throw new RuntimeException("Erro ao gerar ID no Redis");
+        }
         return hashids.encode(id);
     }
 

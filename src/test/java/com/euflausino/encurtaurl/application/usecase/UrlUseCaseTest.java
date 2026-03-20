@@ -1,88 +1,87 @@
 package com.euflausino.encurtaurl.application.usecase;
 
 import com.euflausino.encurtaurl.application.model.UrlModel;
-import com.euflausino.encurtaurl.application.ports.output.IFindOutput;
-import com.euflausino.encurtaurl.application.ports.output.ISaveOutput;
-import org.hashids.Hashids;
-import org.junit.jupiter.api.Assertions;
+import com.euflausino.encurtaurl.application.ports.output.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import java.util.concurrent.TimeUnit;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class UrlUseCaseTest {
 
-    @Mock
-    private Hashids hashids;
-    @Mock
-    private RedisTemplate<String, String> redisTemplate;
-    @Mock
     private IFindOutput findOutput;
-    @Mock
     private ISaveOutput saveOutput;
-    @Mock
-    private ValueOperations<String, String> valueOperations;
+    private IAdicionarEmCacheOutput adicionarEmCache;
+    private IBuscaCacheOutput buscaCacheOutput;
+    private IGenerateCodeOutput generateCodeOutput;
 
-    @InjectMocks
     private UrlUseCase urlUseCase;
 
-
     @BeforeEach
-    void setUp() {
-        Mockito.when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+    void setup() {
+        findOutput = mock(IFindOutput.class);
+        saveOutput = mock(ISaveOutput.class);
+        adicionarEmCache = mock(IAdicionarEmCacheOutput.class);
+        buscaCacheOutput = mock(IBuscaCacheOutput.class);
+        generateCodeOutput = mock(IGenerateCodeOutput.class);
+
+        urlUseCase = new UrlUseCase(
+                findOutput,
+                saveOutput,
+                adicionarEmCache,
+                buscaCacheOutput,
+                generateCodeOutput
+        );
     }
 
     @Test
-    void deveGerarUmShortCode(){
-        Mockito.when(hashids.encode(Mockito.anyLong())).thenReturn("abc123");
-        String code = urlUseCase.createShortUrl("https://github.com/Euflausino");
-        Assertions.assertNotNull(code);
-    }
-
-    @Test
-    void deveRetornarUrlDoCache() {
+    void deveCriarUrlCurta() {
+        String originalUrl = "https://google.com";
         String code = "abc123";
-        String cacheKey = "short_url:" + code;
-        Mockito.when(valueOperations.get(cacheKey))
-                    .thenReturn("https://google.com");
-        String result = urlUseCase.redirectShortUrl(code);
-        Assertions.assertEquals("https://google.com", result);
-        // não deve buscar no banco
-        Mockito.verify(findOutput, Mockito.never()).find(Mockito.any());
 
+        when(generateCodeOutput.generateCode()).thenReturn(code);
+
+        String result = urlUseCase.createShortUrl(originalUrl);
+
+        assertEquals("http://localhost:8080/url/" + code, result);
+
+        verify(saveOutput, times(1)).save(any(UrlModel.class));
+        verify(adicionarEmCache, times(1)).adicionarEmCache(code, originalUrl);
     }
 
     @Test
-    void deveBuscarNoBancoESalvarNoCache() {
+    void deveRedirecionarUsandoCache() {
         String code = "abc123";
-        String cacheKey = "short_url:" + code;
+        String cachedUrl = "https://google.com";
 
-        Mockito.when(valueOperations.get(cacheKey))
-                .thenReturn(null);
-
-        Mockito.when(findOutput.find(code))
-                .thenReturn("https://github.com");
+        when(buscaCacheOutput.buscarEmCache(code)).thenReturn(cachedUrl);
 
         String result = urlUseCase.redirectShortUrl(code);
 
-        Assertions.assertEquals("https://github.com", result);
+        assertEquals(cachedUrl, result);
 
-        // deve buscar no banco
-        Mockito.verify(findOutput).find(code);
-
-        // deve salvar no cache
-        Mockito.verify(valueOperations)
-                .set(cacheKey, "https://github.com", 10, TimeUnit.MINUTES);
+        verify(findOutput, never()).find(any());
+        verify(adicionarEmCache, never()).adicionarEmCache(any(), any());
     }
 
+    @Test
+    void deveRedirecionarBuscandoNoBancoQuandoCacheVazio() {
+        String code = "abc123";
+        String dbUrl = "https://google.com";
+
+        when(buscaCacheOutput.buscarEmCache(code)).thenReturn(null);
+        when(findOutput.find(code)).thenReturn(dbUrl);
+
+        String result = urlUseCase.redirectShortUrl(code);
+
+        assertEquals(dbUrl, result);
+
+        verify(findOutput, times(1)).find(code);
+        verify(adicionarEmCache, times(1)).adicionarEmCache(code, dbUrl);
+    }
 }
