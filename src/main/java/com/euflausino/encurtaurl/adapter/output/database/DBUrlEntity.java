@@ -14,10 +14,10 @@ public class DBUrlEntity {
     private String original_url;
     private Instant created_at;
 
-    public DBUrlEntity(String short_code, String original_url) {
+    public DBUrlEntity(String short_code, String original_url, Instant created_at) {
         this.short_code = short_code;
         this.original_url = original_url;
-        this.created_at = Instant.now();
+        this.created_at = created_at;
     }
 
     public DBUrlEntity() {

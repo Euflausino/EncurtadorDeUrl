@@ -5,6 +5,8 @@ import com.euflausino.encurtaurl.application.ports.input.ICreateInput;
 import com.euflausino.encurtaurl.application.ports.input.IRedirectInput;
 import com.euflausino.encurtaurl.application.ports.output.*;
 
+import java.time.Instant;
+
 public class UrlUseCase implements ICreateInput, IRedirectInput {
 
     private final IFindOutput findOutput;
@@ -24,9 +26,7 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
     @Override
     public String createShortUrl(String urlOriginal) {
         String code =  generateCodeOutput.generateCode();
-        UrlModel urlModel = new UrlModel();
-        urlModel.setOriginal_url(urlOriginal);
-        urlModel.setShort_url(code);
+        UrlModel urlModel = createUrlModel(urlOriginal, code);
         saveOutput.save(urlModel);
 
         adicionarEmCache.adicionarEmCache(code, urlModel.getOriginal_url());
@@ -42,6 +42,10 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
             adicionarEmCache.adicionarEmCache(code, url);
         }
         return url;
+    }
+
+    private UrlModel createUrlModel(String urlOriginal, String code) {
+        return new UrlModel(urlOriginal, code, Instant.now());
     }
 
 }
