@@ -3,63 +3,45 @@ package com.euflausino.encurtaurl.application.usecase;
 import com.euflausino.encurtaurl.application.model.UrlModel;
 import com.euflausino.encurtaurl.application.ports.input.ICreateInput;
 import com.euflausino.encurtaurl.application.ports.input.IRedirectInput;
-import com.euflausino.encurtaurl.application.ports.output.IFindOutput;
-import com.euflausino.encurtaurl.application.ports.output.ISaveOutput;
-import org.hashids.Hashids;
-import org.springframework.data.redis.core.RedisTemplate;
-
-import java.util.concurrent.TimeUnit;
+import com.euflausino.encurtaurl.application.ports.output.*;
 
 public class UrlUseCase implements ICreateInput, IRedirectInput {
 
-    private final Hashids hashids;
-    private final RedisTemplate<String, String> redisTemplate;
     private final IFindOutput findOutput;
     private final ISaveOutput saveOutput;
+    private final IAdicionarEmCacheOutput adicionarEmCache;
+    private final IBuscaCacheOutput buscaCacheOutput;
+    private final IGenerateCodeOutput generateCodeOutput;
 
-    public UrlUseCase(Hashids hashids, RedisTemplate<String, String> redisTemplate, IFindOutput findOutput, ISaveOutput saveOutput) {
-        this.hashids = hashids;
-        this.redisTemplate = redisTemplate;
+    public UrlUseCase(IFindOutput findOutput, ISaveOutput saveOutput, IAdicionarEmCacheOutput adicionarEmCache, IBuscaCacheOutput buscaCacheOutput, IGenerateCodeOutput generateCodeOutput) {
         this.findOutput = findOutput;
         this.saveOutput = saveOutput;
+        this.adicionarEmCache = adicionarEmCache;
+        this.buscaCacheOutput = buscaCacheOutput;
+        this.generateCodeOutput = generateCodeOutput;
     }
 
     @Override
     public String createShortUrl(String urlOriginal) {
-        String code = generateCode();
+        String code =  generateCodeOutput.generateCode();
         UrlModel urlModel = new UrlModel();
         urlModel.setOriginal_url(urlOriginal);
         urlModel.setShort_url(code);
         saveOutput.save(urlModel);
 
-        String cacheKey = "short_url:" + code;
-        redisTemplate.opsForValue().set(cacheKey, urlModel.getOriginal_url(), 10, TimeUnit.MINUTES);
+        adicionarEmCache.adicionarEmCache(code, urlModel.getOriginal_url());
 
         return "http://localhost:8080/url/"+code;
     }
 
     @Override
     public String redirectShortUrl(String code) {
-        String cacheKey =   "short_url:" + code;
-        String url = redisTemplate.opsForValue().get(cacheKey);
+        String url = buscaCacheOutput.buscarEmCache(code);
         if (url == null){
             url = findOutput.find(code);
-            redisTemplate.opsForValue().set(cacheKey, url, 10, TimeUnit.MINUTES);
+            adicionarEmCache.adicionarEmCache(code, url);
         }
         return url;
-    }
-
-    private String generateCode(){
-        Long id = redisTemplate.opsForValue().increment("url:id");
-        return hashids.encode(id);
-    }
-
-    private Long decode(String code){
-        long[] numbers = hashids.decode(code);
-        if (numbers.length == 0) {
-            throw new IllegalArgumentException("Invalid code");
-        }
-        return numbers[0];
     }
 
 }
