@@ -23,7 +23,7 @@ public class UrlController {
     @PostMapping
     ResponseEntity<String> createShortUrl(@RequestParam String originalUrl) {
         String shortUrl = createInput.createShortUrl(originalUrl);
-        return ResponseEntity.ok(shortUrl);
+        return ResponseEntity.status(HttpStatus.CREATED).body(shortUrl);
     }
 
     @GetMapping("/{code}")

@@ -34,7 +34,7 @@ class UrlControllerTest {
                         MockMvcRequestBuilders.post("/url")
                                 .param("originalUrl", "https://google.com")
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(content().string("abc123"));
 
         Mockito.verify(createInput).createShortUrl("https://google.com");
