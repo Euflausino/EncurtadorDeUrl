@@ -31,7 +31,7 @@ public class UrlUseCase implements ICreateInput, IRedirectInput {
 
         adicionarEmCache.adicionarEmCache(code, urlModel.getOriginal_url());
 
-        return "http://localhost:8080/url/"+code;
+        return code;
     }
 
     @Override
